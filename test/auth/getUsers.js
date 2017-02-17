@@ -20,7 +20,8 @@ describe(' GET /users', () => {
 
     let server;
     const mockedUser = Mocks.mockedUser;
-    const validUser = Factories.validUser();
+    const createUser = Factories.createUser();
+    const dbUser = Factories.dbUser();
 
     lab.beforeEach((done) => {
 
@@ -41,12 +42,11 @@ describe(' GET /users', () => {
 
     it('returns users', { parallel: false }, (done) => {
 
-        const usersList = [validUser, validUser];
+        const usersList = [dbUser, dbUser];
 
-        mockedUser.expects('find')
-                  .yields(null, usersList);
+        mockedUser.expects('find').yields(null, usersList);
 
-        server.inject({ url: '/users', credentials: validUser }, (reply) => {
+        server.inject({ url: '/users', credentials: createUser }, (reply) => {
 
             expect(reply.statusCode).to.equal(200);
             expect(JSON.parse(reply.payload)).to.equal(usersList);
@@ -56,10 +56,9 @@ describe(' GET /users', () => {
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedUser.expects('find')
-                  .yields(new Error(), null);
+        mockedUser.expects('find').yields(new Error(), null);
 
-        server.inject({ url: '/users', credentials: validUser }, (reply) => {
+        server.inject({ url: '/users', credentials: createUser }, (reply) => {
 
             expect(reply.statusCode).to.equal(400);
             done();
@@ -68,10 +67,9 @@ describe(' GET /users', () => {
 
     it('fails on no users', { parallel: false }, (done) => {
 
-        mockedUser.expects('find')
-                  .yields(null, []);
+        mockedUser.expects('find').yields(null, []);
 
-        server.inject({ url: '/users', credentials: validUser }, (reply) => {
+        server.inject({ url: '/users', credentials: createUser }, (reply) => {
 
             expect(reply.statusCode).to.equal(404);
             expect(JSON.parse(reply.payload).message).to.equal('No users found');

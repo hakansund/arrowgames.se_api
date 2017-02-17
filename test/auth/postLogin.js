@@ -20,8 +20,9 @@ const internals = {};
 describe(' POST /login', () => {
 
     let server;
-    const validUser = Factories.validUser();
+    const createUser = Factories.createUser();
     const invalidUser = Factories.invalidUser();
+    const dbUser = Factories.dbUser();
     const mockedUser = Mocks.mockedUser;
     const mockedBcrypt = Mocks.mockedBcrypt;
 
@@ -44,15 +45,13 @@ describe(' POST /login', () => {
 
     it('logs in', { parallel: false }, (done) => {
 
-        mockedUser.expects('findOne')
-                  .yields(null, validUser);
-        mockedBcrypt.expects('compare')
-                    .yields(null, true);
+        mockedUser.expects('findOne').yields(null, dbUser);
+        mockedBcrypt.expects('compare').yields(null, true);
 
         const request = {
             method: 'POST',
             url: '/login',
-            payload: JSON.stringify(validUser)
+            payload: JSON.stringify(createUser)
         };
 
         server.inject(request, (reply) => {
@@ -80,15 +79,13 @@ describe(' POST /login', () => {
 
     it('fails on invalid password', { parallel: false }, (done) => {
 
-        mockedUser.expects('findOne')
-                  .yields(null, validUser);
-        mockedBcrypt.expects('compare')
-                    .yields(null, false);
+        mockedUser.expects('findOne').yields(null, dbUser);
+        mockedBcrypt.expects('compare').yields(null, false);
 
         const request = {
             method: 'POST',
             url: '/login',
-            payload: JSON.stringify(validUser)
+            payload: JSON.stringify(createUser)
         };
 
         server.inject(request, (reply) => {
@@ -101,13 +98,12 @@ describe(' POST /login', () => {
 
     it('fails when user does not exists', { parallel: false }, (done) => {
 
-        mockedUser.expects('findOne')
-                  .yields(null, null);
+        mockedUser.expects('findOne').yields(null, null);
 
         const request = {
             method: 'POST',
             url: '/login',
-            payload: JSON.stringify(validUser)
+            payload: JSON.stringify(createUser)
         };
 
         server.inject(request, (reply) => {
@@ -120,13 +116,12 @@ describe(' POST /login', () => {
 
     it('fails on bad request on find', { parallel: false }, (done) => {
 
-        mockedUser.expects('findOne')
-                  .yields(new Error(), null);
+        mockedUser.expects('findOne').yields(new Error(), null);
 
         const request = {
             method: 'POST',
             url: '/login',
-            payload: JSON.stringify(validUser)
+            payload: JSON.stringify(createUser)
         };
 
         server.inject(request, (reply) => {
@@ -139,15 +134,13 @@ describe(' POST /login', () => {
 
     it('fails on bad request on password compare', { parallel: false }, (done) => {
 
-        mockedUser.expects('findOne')
-                  .yields(null, validUser);
-        mockedBcrypt.expects('compare')
-                    .yields(new Error(), null);
+        mockedUser.expects('findOne').yields(null, dbUser);
+        mockedBcrypt.expects('compare').yields(new Error(), null);
 
         const request = {
             method: 'POST',
             url: '/login',
-            payload: JSON.stringify(validUser)
+            payload: JSON.stringify(createUser)
         };
 
         server.inject(request, (reply) => {
