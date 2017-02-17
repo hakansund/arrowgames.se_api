@@ -40,7 +40,7 @@ describe(' POST /rules', () => {
         server.stop(done);
     });
 
-    it('creates a race', { parallel: false }, (done) => {
+    it('creates a rule', { parallel: false }, (done) => {
 
         mockedRulePrototype.expects('save')
                            .yields(null);
@@ -77,7 +77,7 @@ describe(' POST /rules', () => {
         });
     });
 
-    it('fails on invalid race', { parallel: false }, (done) => {
+    it('fails on invalid rule', { parallel: false }, (done) => {
 
         mockedRulePrototype.expects('save')
                            .yields(null);

@@ -2,13 +2,12 @@
 
 const Code = require('code');
 const Lab = require('lab');
-const Sinon = require('sinon');
 require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
 const Factories = require('./factories');
-const Rule = require('../../lib/api/rules/model/Rule');
+const Mocks = require('./mocks');
 
 const internals = {};
 
@@ -17,11 +16,10 @@ const expect = Code.expect;
 const describe = lab.experiment;
 const it = lab.test;
 
-describe(' PATCH /rules/{id}', () => {
+describe(' DELETE /rules/subjects/{id}', () => {
 
     let server;
-    const validRule = Factories.validRule();
-    const RuleMock = Sinon.mock(Rule);
+    const mockedSubject = Mocks.mockedSubject;
 
     lab.beforeEach((done) => {
 
@@ -40,34 +38,34 @@ describe(' PATCH /rules/{id}', () => {
         server.stop(done);
     });
 
-    it('updates a rule', { parallel: false }, (done) => {
+    it('removes subject', { parallel: false }, (done) => {
 
-        RuleMock.expects('findOneAndUpdate')
-                  .yields(null, validRule);
+        const validSubject = Factories.validSubject();
+
+        mockedSubject.expects('findOneAndRemove')
+                    .yields(null, validSubject);
 
         const request = {
-            method: 'PATCH',
-            url: '/rules/111111111111111111111111',
-            payload: JSON.stringify(validRule)
+            method: 'DELETE',
+            url: '/rules/subjects/111111111111111111111111'
         };
 
         server.inject(request, (reply) => {
 
             expect(reply.statusCode).to.equal(200);
-            expect(JSON.parse(reply.payload).rule).to.equal(validRule);
+            expect(JSON.parse(reply.payload)).to.equal(validSubject);
             done();
         });
     });
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        RuleMock.expects('findOneAndUpdate')
-                  .yields(new Error(), null);
+        mockedSubject.expects('findOneAndRemove')
+                    .yields(new Error(), null);
 
         const request = {
-            method: 'PATCH',
-            url: '/rules/111111111111111111111111',
-            payload: JSON.stringify(validRule)
+            method: 'DELETE',
+            url: '/rules/subjects/111111111111111111111111'
         };
 
         server.inject(request, (reply) => {
@@ -77,21 +75,20 @@ describe(' PATCH /rules/{id}', () => {
         });
     });
 
-    it('fails on no rule', { parallel: false }, (done) => {
+    it('fails on no subject', { parallel: false }, (done) => {
 
-        RuleMock.expects('findOneAndUpdate')
-                  .yields(null, null);
+        mockedSubject.expects('findOneAndRemove')
+                    .yields(null, null);
 
         const request = {
-            method: 'PATCH',
-            url: '/rules/111111111111111111111111',
-            payload: JSON.stringify(validRule)
+            method: 'DELETE',
+            url: '/rules/subjects/111111111111111111111111'
         };
 
         server.inject(request, (reply) => {
 
             expect(reply.statusCode).to.equal(404);
-            expect(JSON.parse(reply.payload).message).to.equal('Rule not found!');
+            expect(JSON.parse(reply.payload).message).to.equal('No subject found');
             done();
         });
     });
