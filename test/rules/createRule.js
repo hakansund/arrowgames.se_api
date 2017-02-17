@@ -2,7 +2,6 @@
 
 const Code = require('code');
 const Lab = require('lab');
-require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
@@ -19,7 +18,7 @@ const it = lab.test;
 describe(' POST /rules', () => {
 
     let server;
-    const validRule = Factories.validRule();
+    const createRule = Factories.createRule();
     const invalidRule = Factories.invalidRule();
     const mockedRulePrototype = Mocks.mockedRulePrototype;
 
@@ -40,34 +39,38 @@ describe(' POST /rules', () => {
         server.stop(done);
     });
 
-    it('creates a race', { parallel: false }, (done) => {
+    it('creates a rule', { parallel: false }, (done) => {
 
-        mockedRulePrototype.expects('save')
-                           .yields(null);
+        mockedRulePrototype.expects('save').yields(null);
 
         const request = {
             method: 'POST',
             url: '/rules',
-            payload: JSON.stringify(validRule)
+            payload: JSON.stringify(createRule)
         };
 
         server.inject(request, (reply) => {
 
             expect(reply.statusCode).to.equal(201);
-            expect(JSON.parse(reply.payload).rule.title).to.equal(validRule.title);
+            const replyPayload = JSON.parse(reply.payload);
+            expect(Object.keys(replyPayload).length).to.equal(5);
+            expect(replyPayload._id).to.exist();
+            expect(replyPayload.title).to.equal('title');
+            expect(replyPayload.text).to.equal('text');
+            expect(replyPayload.createdAt).to.exist();
+            expect(replyPayload.updatedAt).to.exist();
             done();
         });
     });
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedRulePrototype.expects('save')
-                           .yields(new Error());
+        mockedRulePrototype.expects('save').yields(new Error());
 
         const request = {
             method: 'POST',
             url: '/rules',
-            payload: JSON.stringify(validRule)
+            payload: JSON.stringify(createRule)
         };
 
         server.inject(request, (reply) => {
@@ -77,10 +80,10 @@ describe(' POST /rules', () => {
         });
     });
 
-    it('fails on invalid race', { parallel: false }, (done) => {
+    it('fails on invalid rule', { parallel: false }, (done) => {
 
-        mockedRulePrototype.expects('save')
-                           .yields(null);
+        mockedRulePrototype.expects('save').yields(null);
+
         const request = {
             method: 'POST',
             url: '/rules',

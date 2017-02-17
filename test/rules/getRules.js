@@ -3,7 +3,6 @@
 const Code = require('code');
 const Lab = require('lab');
 const Sinon = require('sinon');
-require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
@@ -21,6 +20,7 @@ describe(' GET /rules', () => {
 
     let server;
     const RuleMock = Sinon.mock(Rule);
+    const dbRule = Factories.dbRule();
 
     lab.beforeEach((done) => {
 
@@ -41,11 +41,9 @@ describe(' GET /rules', () => {
 
     it('returns rules', { parallel: false }, (done) => {
 
-        const validRule = Factories.validRule();
-        const rulesList = [validRule, validRule];
+        const rulesList = [dbRule, dbRule];
 
-        RuleMock.expects('find')
-                .yields(null, rulesList);
+        RuleMock.expects('find').yields(null, rulesList);
 
         server.inject({ url: '/rules' }, (reply) => {
 
@@ -57,8 +55,7 @@ describe(' GET /rules', () => {
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        RuleMock.expects('find')
-                .yields(new Error(), null);
+        RuleMock.expects('find').yields(new Error(), null);
 
         server.inject({ url: '/rules' }, (reply) => {
 
@@ -69,8 +66,7 @@ describe(' GET /rules', () => {
 
     it('fails on no rules', { parallel: false }, (done) => {
 
-        RuleMock.expects('find')
-                .yields(null, []);
+        RuleMock.expects('find').yields(null, []);
 
         server.inject({ url: '/rules' }, (reply) => {
 
