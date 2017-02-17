@@ -20,7 +20,8 @@ describe(' DELETE /users', () => {
 
     let server;
     const mockedUser = Mocks.mockedUser;
-    const validUser = Factories.validUser();
+    const createUser = Factories.createUser();
+    const dbUser = Factories.dbUser();
 
     lab.beforeEach((done) => {
 
@@ -41,32 +42,30 @@ describe(' DELETE /users', () => {
 
     it('removes user', { parallel: false }, (done) => {
 
-        mockedUser.expects('findOneAndRemove')
-                  .yields(null, validUser);
+        mockedUser.expects('findOneAndRemove').yields(null, dbUser);
 
         const request = {
             method: 'DELETE',
             url: '/users/111111111111111111111111',
-            credentials: validUser
+            credentials: createUser
         };
 
         server.inject(request, (reply) => {
 
             expect(reply.statusCode).to.equal(200);
-            expect(JSON.parse(reply.payload)).to.equal(validUser);
+            expect(JSON.parse(reply.payload)).to.equal(dbUser);
             done();
         });
     });
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedUser.expects('findOneAndRemove')
-                  .yields(new Error(), null);
+        mockedUser.expects('findOneAndRemove').yields(new Error(), null);
 
         const request = {
             method: 'DELETE',
             url: '/users/111111111111111111111111',
-            credentials: validUser
+            credentials: createUser
         };
 
         server.inject(request, (reply) => {
@@ -78,13 +77,12 @@ describe(' DELETE /users', () => {
 
     it('fails on no user', { parallel: false }, (done) => {
 
-        mockedUser.expects('findOneAndRemove')
-                  .yields(null, null);
+        mockedUser.expects('findOneAndRemove').yields(null, null);
 
         const request = {
             method: 'DELETE',
             url: '/users/111111111111111111111111',
-            credentials: validUser
+            credentials: createUser
         };
 
         server.inject(request, (reply) => {

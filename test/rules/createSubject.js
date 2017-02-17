@@ -42,8 +42,7 @@ describe(' POST /rules/subjects', () => {
 
     it('creates a subject', { parallel: false }, (done) => {
 
-        mockedSubjectPrototype.expects('save')
-                              .yields(null);
+        mockedSubjectPrototype.expects('save').yields(null);
 
         const request = {
             method: 'POST',
@@ -61,8 +60,7 @@ describe(' POST /rules/subjects', () => {
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedSubjectPrototype.expects('save')
-                              .yields(new Error());
+        mockedSubjectPrototype.expects('save').yields(new Error());
 
         const request = {
             method: 'POST',
@@ -79,8 +77,7 @@ describe(' POST /rules/subjects', () => {
 
     it('fails on invalid subject', { parallel: false }, (done) => {
 
-        mockedSubjectPrototype.expects('save')
-                           .yields(null);
+        mockedSubjectPrototype.expects('save').yields(null);
         const request = {
             method: 'POST',
             url: '/rules/subjects',

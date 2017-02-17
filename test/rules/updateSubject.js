@@ -41,8 +41,7 @@ describe(' PATCH /rules/subjects/{id}', () => {
 
     it('updates a subject', { parallel: false }, (done) => {
 
-        mockedSubject.expects('findOneAndUpdate')
-                     .yields(null, validSubject);
+        mockedSubject.expects('findOneAndUpdate').yields(null, validSubject);
 
         const request = {
             method: 'PATCH',
@@ -60,8 +59,7 @@ describe(' PATCH /rules/subjects/{id}', () => {
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedSubject.expects('findOneAndUpdate')
-                     .yields(new Error(), null);
+        mockedSubject.expects('findOneAndUpdate').yields(new Error(), null);
 
         const request = {
             method: 'PATCH',
@@ -78,8 +76,7 @@ describe(' PATCH /rules/subjects/{id}', () => {
 
     it('fails on no subject', { parallel: false }, (done) => {
 
-        mockedSubject.expects('findOneAndUpdate')
-                     .yields(null, null);
+        mockedSubject.expects('findOneAndUpdate').yields(null, null);
 
         const request = {
             method: 'PATCH',

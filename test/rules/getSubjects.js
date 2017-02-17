@@ -43,8 +43,7 @@ describe(' GET /rules/subjects', () => {
         const validSubject = Factories.validSubject();
         const subjectsList = [validSubject, validSubject];
 
-        subjectMock.expects('find')
-                   .yields(null, subjectsList);
+        subjectMock.expects('find').yields(null, subjectsList);
 
         server.inject({ url: '/rules/subjects' }, (reply) => {
 
@@ -56,8 +55,7 @@ describe(' GET /rules/subjects', () => {
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        subjectMock.expects('find')
-                .yields(new Error(), null);
+        subjectMock.expects('find').yields(new Error(), null);
 
         server.inject({ url: '/rules/subjects' }, (reply) => {
 
@@ -68,8 +66,7 @@ describe(' GET /rules/subjects', () => {
 
     it('fails on no subjects', { parallel: false }, (done) => {
 
-        subjectMock.expects('find')
-                .yields(null, []);
+        subjectMock.expects('find').yields(null, []);
 
         server.inject({ url: '/rules/subjects' }, (reply) => {
 

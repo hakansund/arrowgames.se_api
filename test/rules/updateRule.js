@@ -3,7 +3,6 @@
 const Code = require('code');
 const Lab = require('lab');
 const Sinon = require('sinon');
-require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
@@ -20,7 +19,8 @@ const it = lab.test;
 describe(' PATCH /rules/{id}', () => {
 
     let server;
-    const validRule = Factories.validRule();
+    const createRule = Factories.createRule();
+    const dbRule = Factories.dbRule();
     const RuleMock = Sinon.mock(Rule);
 
     lab.beforeEach((done) => {
@@ -42,32 +42,30 @@ describe(' PATCH /rules/{id}', () => {
 
     it('updates a rule', { parallel: false }, (done) => {
 
-        RuleMock.expects('findOneAndUpdate')
-                  .yields(null, validRule);
+        RuleMock.expects('findOneAndUpdate').yields(null, dbRule);
 
         const request = {
             method: 'PATCH',
             url: '/rules/111111111111111111111111',
-            payload: JSON.stringify(validRule)
+            payload: JSON.stringify(createRule)
         };
 
         server.inject(request, (reply) => {
 
             expect(reply.statusCode).to.equal(200);
-            expect(JSON.parse(reply.payload).rule).to.equal(validRule);
+            expect(JSON.parse(reply.payload)).to.equal(dbRule);
             done();
         });
     });
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        RuleMock.expects('findOneAndUpdate')
-                  .yields(new Error(), null);
+        RuleMock.expects('findOneAndUpdate').yields(new Error(), null);
 
         const request = {
             method: 'PATCH',
             url: '/rules/111111111111111111111111',
-            payload: JSON.stringify(validRule)
+            payload: JSON.stringify(createRule)
         };
 
         server.inject(request, (reply) => {
@@ -79,13 +77,12 @@ describe(' PATCH /rules/{id}', () => {
 
     it('fails on no rule', { parallel: false }, (done) => {
 
-        RuleMock.expects('findOneAndUpdate')
-                  .yields(null, null);
+        RuleMock.expects('findOneAndUpdate').yields(null, null);
 
         const request = {
             method: 'PATCH',
             url: '/rules/111111111111111111111111',
-            payload: JSON.stringify(validRule)
+            payload: JSON.stringify(createRule)
         };
 
         server.inject(request, (reply) => {

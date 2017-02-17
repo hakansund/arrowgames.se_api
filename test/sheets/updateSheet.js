@@ -2,13 +2,11 @@
 
 const Code = require('code');
 const Lab = require('lab');
-const Sinon = require('sinon');
-require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
 const Factories = require('./factories');
-const Sheet = require('../../lib/api/sheets/model/Sheet');
+const Mocks = require('./mocks');
 
 const internals = {};
 
@@ -20,8 +18,9 @@ const it = lab.test;
 describe(' PATCH /sheets/{id}', () => {
 
     let server;
-    const validSheet = Factories.validSheet();
-    const SheetMock = Sinon.mock(Sheet);
+    const mockedSheet = Mocks.mockedSheet;
+    const createSheet = Factories.createSheet();
+    const dbSheet = Factories.dbSheet();
 
     lab.beforeEach((done) => {
 
@@ -42,32 +41,30 @@ describe(' PATCH /sheets/{id}', () => {
 
     it('updates a sheet', { parallel: false }, (done) => {
 
-        SheetMock.expects('findOneAndUpdate')
-                  .yields(null, validSheet);
+        mockedSheet.expects('findOneAndUpdate').yields(null, dbSheet);
 
         const request = {
             method: 'PATCH',
             url: '/sheets/111111111111111111111111',
-            payload: JSON.stringify(validSheet)
+            payload: JSON.stringify(createSheet)
         };
 
         server.inject(request, (reply) => {
 
             expect(reply.statusCode).to.equal(200);
-            expect(JSON.parse(reply.payload).sheet).to.equal(validSheet);
+            expect(JSON.parse(reply.payload)).to.equal(dbSheet);
             done();
         });
     });
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        SheetMock.expects('findOneAndUpdate')
-                  .yields(new Error(), null);
+        mockedSheet.expects('findOneAndUpdate').yields(new Error(), null);
 
         const request = {
             method: 'PATCH',
             url: '/sheets/111111111111111111111111',
-            payload: JSON.stringify(validSheet)
+            payload: JSON.stringify(createSheet)
         };
 
         server.inject(request, (reply) => {
@@ -79,13 +76,12 @@ describe(' PATCH /sheets/{id}', () => {
 
     it('fails on no sheet', { parallel: false }, (done) => {
 
-        SheetMock.expects('findOneAndUpdate')
-                  .yields(null, null);
+        mockedSheet.expects('findOneAndUpdate').yields(null, null);
 
         const request = {
             method: 'PATCH',
             url: '/sheets/111111111111111111111111',
-            payload: JSON.stringify(validSheet)
+            payload: JSON.stringify(createSheet)
         };
 
         server.inject(request, (reply) => {

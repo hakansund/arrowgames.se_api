@@ -2,7 +2,6 @@
 
 const Code = require('code');
 const Lab = require('lab');
-require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
@@ -20,6 +19,7 @@ describe(' GET /rules/{id}', () => {
 
     let server;
     const mockedRule = Mocks.mockedRule;
+    const dbRule = Factories.dbRule();
 
     lab.beforeEach((done) => {
 
@@ -40,25 +40,19 @@ describe(' GET /rules/{id}', () => {
 
     it('returns rule', { parallel: false }, (done) => {
 
-        const validRule = Factories.validRule();
-
-        mockedRule.expects('findOne')
-                          .chain('exec')
-                          .yields(null, validRule);
+        mockedRule.expects('findOne').chain('exec').yields(null, dbRule);
 
         server.inject({ url: '/rules/111111111111111111111111' }, (reply) => {
 
             expect(reply.statusCode).to.equal(200);
-            expect(JSON.parse(reply.payload)).to.equal(validRule);
+            expect(JSON.parse(reply.payload)).to.equal(dbRule);
             done();
         });
     });
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedRule.expects('findOne')
-                          .chain('exec')
-                          .yields(new Error(), null);
+        mockedRule.expects('findOne').chain('exec').yields(new Error(), null);
 
         server.inject({ url: '/rules/111111111111111111111111' }, (reply) => {
 
@@ -69,9 +63,7 @@ describe(' GET /rules/{id}', () => {
 
     it('fails on no rule', { parallel: false }, (done) => {
 
-        mockedRule.expects('findOne')
-                          .chain('exec')
-                          .yields(null, null);
+        mockedRule.expects('findOne').chain('exec').yields(null, null);
 
         server.inject({ url: '/rules/111111111111111111111111' }, (reply) => {
 

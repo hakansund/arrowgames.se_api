@@ -42,8 +42,7 @@ describe(' DELETE /rules/subjects/{id}', () => {
 
         const validSubject = Factories.validSubject();
 
-        mockedSubject.expects('findOneAndRemove')
-                    .yields(null, validSubject);
+        mockedSubject.expects('findOneAndRemove').yields(null, validSubject);
 
         const request = {
             method: 'DELETE',
@@ -60,8 +59,7 @@ describe(' DELETE /rules/subjects/{id}', () => {
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedSubject.expects('findOneAndRemove')
-                    .yields(new Error(), null);
+        mockedSubject.expects('findOneAndRemove').yields(new Error(), null);
 
         const request = {
             method: 'DELETE',
@@ -77,8 +75,7 @@ describe(' DELETE /rules/subjects/{id}', () => {
 
     it('fails on no subject', { parallel: false }, (done) => {
 
-        mockedSubject.expects('findOneAndRemove')
-                    .yields(null, null);
+        mockedSubject.expects('findOneAndRemove').yields(null, null);
 
         const request = {
             method: 'DELETE',

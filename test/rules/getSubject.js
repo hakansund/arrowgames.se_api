@@ -42,9 +42,7 @@ describe(' GET /rules/subjects/{id}', () => {
 
         const validSubject = Factories.validSubject();
 
-        mockedSubject.expects('findOne')
-                          .chain('exec')
-                          .yields(null, validSubject);
+        mockedSubject.expects('findOne').chain('exec').yields(null, validSubject);
 
         server.inject({ url: '/rules/subjects/111111111111111111111111' }, (reply) => {
 
@@ -56,9 +54,7 @@ describe(' GET /rules/subjects/{id}', () => {
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedSubject.expects('findOne')
-                          .chain('exec')
-                          .yields(new Error(), null);
+        mockedSubject.expects('findOne').chain('exec').yields(new Error(), null);
 
         server.inject({ url: '/rules/subjects/111111111111111111111111' }, (reply) => {
 
@@ -69,9 +65,7 @@ describe(' GET /rules/subjects/{id}', () => {
 
     it('fails on no subject', { parallel: false }, (done) => {
 
-        mockedSubject.expects('findOne')
-                          .chain('exec')
-                          .yields(null, null);
+        mockedSubject.expects('findOne').chain('exec').yields(null, null);
 
         server.inject({ url: '/rules/subjects/111111111111111111111111' }, (reply) => {
 

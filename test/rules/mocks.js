@@ -1,6 +1,7 @@
 'use strict';
 
 const Sinon = require('sinon');
+require('sinon-mongoose');
 const Rule = require('../../lib/api/rules/model/Rule');
 const Subject = require('../../lib/api/rules/model/Subject');
 

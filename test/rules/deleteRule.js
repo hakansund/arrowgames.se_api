@@ -2,7 +2,6 @@
 
 const Code = require('code');
 const Lab = require('lab');
-require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
@@ -20,6 +19,7 @@ describe(' DELETE /rules/{id}', () => {
 
     let server;
     const mockedRule = Mocks.mockedRule;
+    const dbRule = Factories.dbRule();
 
     lab.beforeEach((done) => {
 
@@ -40,10 +40,7 @@ describe(' DELETE /rules/{id}', () => {
 
     it('removes rule', { parallel: false }, (done) => {
 
-        const validRule = Factories.validRule();
-
-        mockedRule.expects('findOneAndRemove')
-                    .yields(null, validRule);
+        mockedRule.expects('findOneAndRemove').yields(null, dbRule);
 
         const request = {
             method: 'DELETE',
@@ -53,15 +50,14 @@ describe(' DELETE /rules/{id}', () => {
         server.inject(request, (reply) => {
 
             expect(reply.statusCode).to.equal(200);
-            expect(JSON.parse(reply.payload)).to.equal(validRule);
+            expect(JSON.parse(reply.payload)).to.equal(dbRule);
             done();
         });
     });
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedRule.expects('findOneAndRemove')
-                    .yields(new Error(), null);
+        mockedRule.expects('findOneAndRemove').yields(new Error(), null);
 
         const request = {
             method: 'DELETE',
@@ -77,8 +73,7 @@ describe(' DELETE /rules/{id}', () => {
 
     it('fails on no rule', { parallel: false }, (done) => {
 
-        mockedRule.expects('findOneAndRemove')
-                    .yields(null, null);
+        mockedRule.expects('findOneAndRemove').yields(null, null);
 
         const request = {
             method: 'DELETE',
