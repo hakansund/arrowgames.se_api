@@ -2,13 +2,11 @@
 
 const Code = require('code');
 const Lab = require('lab');
-const Sinon = require('sinon');
-require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
 const Factories = require('./factories');
-const Sheet = require('../../lib/api/sheets/model/Sheet');
+const Mocks = require('./mocks');
 
 const internals = {};
 
@@ -20,7 +18,8 @@ const it = lab.test;
 describe(' GET /sheets', () => {
 
     let server;
-    const SheetMock = Sinon.mock(Sheet);
+    const mockedSheet = Mocks.mockedSheet;
+    const dbSheet = Factories.dbSheet();
 
     lab.beforeEach((done) => {
 
@@ -41,11 +40,9 @@ describe(' GET /sheets', () => {
 
     it('returns sheets', { parallel: false }, (done) => {
 
-        const validSheet = Factories.validSheet();
-        const sheetsList = [validSheet, validSheet];
+        const sheetsList = [dbSheet, dbSheet];
 
-        SheetMock.expects('find')
-                .yields(null, sheetsList);
+        mockedSheet.expects('find').yields(null, sheetsList);
 
         server.inject({ url: '/sheets' }, (reply) => {
 
@@ -57,8 +54,7 @@ describe(' GET /sheets', () => {
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        SheetMock.expects('find')
-                .yields(new Error(), null);
+        mockedSheet.expects('find').yields(new Error(), null);
 
         server.inject({ url: '/sheets' }, (reply) => {
 
@@ -69,8 +65,7 @@ describe(' GET /sheets', () => {
 
     it('fails on no sheets', { parallel: false }, (done) => {
 
-        SheetMock.expects('find')
-                .yields(null, []);
+        mockedSheet.expects('find').yields(null, []);
 
         server.inject({ url: '/sheets' }, (reply) => {
 

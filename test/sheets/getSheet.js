@@ -2,7 +2,6 @@
 
 const Code = require('code');
 const Lab = require('lab');
-require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
@@ -20,6 +19,7 @@ describe(' GET /sheets/{id}', () => {
 
     let server;
     const mockedSheet = Mocks.mockedSheet;
+    const dbSheet = Factories.dbSheet();
 
     lab.beforeEach((done) => {
 
@@ -40,25 +40,19 @@ describe(' GET /sheets/{id}', () => {
 
     it('returns sheet', { parallel: false }, (done) => {
 
-        const validSheet = Factories.validSheet();
-
-        mockedSheet.expects('findOne')
-                          .chain('exec')
-                          .yields(null, validSheet);
+        mockedSheet.expects('findOne').chain('exec').yields(null, dbSheet);
 
         server.inject({ url: '/sheets/111111111111111111111111' }, (reply) => {
 
             expect(reply.statusCode).to.equal(200);
-            expect(JSON.parse(reply.payload)).to.equal(validSheet);
+            expect(JSON.parse(reply.payload)).to.equal(dbSheet);
             done();
         });
     });
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedSheet.expects('findOne')
-                          .chain('exec')
-                          .yields(new Error(), null);
+        mockedSheet.expects('findOne').chain('exec').yields(new Error(), null);
 
         server.inject({ url: '/sheets/111111111111111111111111' }, (reply) => {
 
@@ -69,9 +63,7 @@ describe(' GET /sheets/{id}', () => {
 
     it('fails on no sheet', { parallel: false }, (done) => {
 
-        mockedSheet.expects('findOne')
-                          .chain('exec')
-                          .yields(null, null);
+        mockedSheet.expects('findOne').chain('exec').yields(null, null);
 
         server.inject({ url: '/sheets/111111111111111111111111' }, (reply) => {
 

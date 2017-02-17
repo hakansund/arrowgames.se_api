@@ -2,7 +2,6 @@
 
 const Code = require('code');
 const Lab = require('lab');
-require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
@@ -19,7 +18,7 @@ const it = lab.test;
 describe(' POST /sheets', () => {
 
     let server;
-    const validSheet = Factories.validSheet();
+    const createSheet = Factories.createSheet();
     const invalidSheet = Factories.invalidSheet();
     const mockedSheetPrototype = Mocks.mockedSheetPrototype;
 
@@ -42,32 +41,38 @@ describe(' POST /sheets', () => {
 
     it('creates a sheet', { parallel: false }, (done) => {
 
-        mockedSheetPrototype.expects('save')
-                           .yields(null);
+        mockedSheetPrototype.expects('save').yields(null);
 
         const request = {
             method: 'POST',
             url: '/sheets',
-            payload: JSON.stringify(validSheet)
+            payload: JSON.stringify(createSheet)
         };
 
         server.inject(request, (reply) => {
 
             expect(reply.statusCode).to.equal(201);
-            expect(JSON.parse(reply.payload).sheet.name).to.equal(validSheet.name);
+            const replyPayload = JSON.parse(reply.payload);
+            expect(Object.keys(replyPayload).length).to.equal(7);
+            expect(replyPayload._id).to.exist();
+            expect(replyPayload.name).to.equal('name');
+            expect(replyPayload.archetype).to.equal('archetype');
+            expect(replyPayload.appearance).to.equal('appearance');
+            expect(replyPayload.skills).to.equal(createSheet.skills);
+            expect(replyPayload.createdAt).to.exist();
+            expect(replyPayload.updatedAt).to.exist();
             done();
         });
     });
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedSheetPrototype.expects('save')
-                           .yields(new Error());
+        mockedSheetPrototype.expects('save').yields(new Error());
 
         const request = {
             method: 'POST',
             url: '/sheets',
-            payload: JSON.stringify(validSheet)
+            payload: JSON.stringify(createSheet)
         };
 
         server.inject(request, (reply) => {
@@ -79,8 +84,8 @@ describe(' POST /sheets', () => {
 
     it('fails on invalid sheet', { parallel: false }, (done) => {
 
-        mockedSheetPrototype.expects('save')
-                           .yields(null);
+        mockedSheetPrototype.expects('save').yields(null);
+
         const request = {
             method: 'POST',
             url: '/sheets',

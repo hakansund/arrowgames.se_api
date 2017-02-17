@@ -2,7 +2,6 @@
 
 const Code = require('code');
 const Lab = require('lab');
-require('sinon-mongoose');
 const Server = require('../../lib');
 const Path = require('path');
 
@@ -20,6 +19,7 @@ describe(' DELETE /sheets/{id}', () => {
 
     let server;
     const mockedSheet = Mocks.mockedSheet;
+    const dbSheet = Factories.dbSheet();
 
     lab.beforeEach((done) => {
 
@@ -40,10 +40,7 @@ describe(' DELETE /sheets/{id}', () => {
 
     it('removes sheet', { parallel: false }, (done) => {
 
-        const validSheet = Factories.validSheet();
-
-        mockedSheet.expects('findOneAndRemove')
-                    .yields(null, validSheet);
+        mockedSheet.expects('findOneAndRemove').yields(null, dbSheet);
 
         const request = {
             method: 'DELETE',
@@ -53,15 +50,14 @@ describe(' DELETE /sheets/{id}', () => {
         server.inject(request, (reply) => {
 
             expect(reply.statusCode).to.equal(200);
-            expect(JSON.parse(reply.payload)).to.equal(validSheet);
+            expect(JSON.parse(reply.payload)).to.equal(dbSheet);
             done();
         });
     });
 
     it('fails on bad request', { parallel: false }, (done) => {
 
-        mockedSheet.expects('findOneAndRemove')
-                    .yields(new Error(), null);
+        mockedSheet.expects('findOneAndRemove').yields(new Error(), null);
 
         const request = {
             method: 'DELETE',
@@ -77,8 +73,7 @@ describe(' DELETE /sheets/{id}', () => {
 
     it('fails on no sheet', { parallel: false }, (done) => {
 
-        mockedSheet.expects('findOneAndRemove')
-                    .yields(null, null);
+        mockedSheet.expects('findOneAndRemove').yields(null, null);
 
         const request = {
             method: 'DELETE',
