@@ -9,13 +9,15 @@
     "test": "./node_modules/lab/bin/lab -v -t 100",
     "test-cov-html": "./node_modules/lab/bin/lab -r html -o coverage.html"
   },
-  "author": "Håkan Sund",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^1.0.1",
     "boom": "^4.2.0",
     "code": "^4.0.0",
     "glue": "^4.1.0",
+    "graphql": "^0.9.1",
+    "graphql-server-hapi": "^0.6.0",
+    "graphql-tools": "^0.10.0",
     "hapi": "^16.0.2",
     "hapi-auth-jwt2": "^7.2.4",
     "joi": "^10.1.0",
