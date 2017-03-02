@@ -22,7 +22,7 @@
     "hapi-auth-jwt2": "^7.2.4",
     "joi": "^10.1.0",
     "joi-objectid": "^2.0.0",
-    "lab": "^11.2.1",
+    "lab": "^12.1.0",
     "lodash.merge": "^4.6.0",
     "mongoose": "^4.7.4",
     "mongoose-unique-validator": "^1.0.3",
